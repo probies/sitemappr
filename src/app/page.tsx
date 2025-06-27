@@ -156,8 +156,8 @@ export default function Home() {
               </nav>
             </SheetContent>
           </Sheet>
-          <span className="hidden md:block font-bold text-xl tracking-tight">
-            Sitemappr
+          <span className=" font-bold text-xl tracking-tight">
+            Sitemapr
           </span>
           <Badge variant="secondary" className="ml-2">
             Beta
