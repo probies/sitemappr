@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sitemappr
+
+A Next.js 14 (App Router) app using TypeScript, Tailwind CSS, and ShadCN UI. Enter a website URL, fetches and parses sitemap.xml and all nested sitemaps recursively on the client side, displays discovered URLs in a table, and allows CSV download. No backend or database is used.
 
 ## Getting Started
 
@@ -16,9 +18,19 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
+- Input a website URL
+- Recursively fetch and parse sitemap.xml and nested sitemaps (client-side only)
+- Display all discovered URLs in a ShadCN UI table
+- Download URLs as a CSV file
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- ShadCN UI
+
+## No backend, no database, no saving — client-side only.
 
 ## Learn More
 
