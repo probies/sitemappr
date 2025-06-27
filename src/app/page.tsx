@@ -139,7 +139,7 @@ export default function Home() {
                   href="#"
                   className="font-semibold text-lg"
                 >
-                  Sitemappr
+                  Sitemapr
                 </a>
                 <a
                   href="#"
