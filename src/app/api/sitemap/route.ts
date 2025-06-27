@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
       status: 200,
       headers: { "Content-Type": "application/xml" },
     });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Error fetching sitemap" }, { status: 500 });
   }
 }
