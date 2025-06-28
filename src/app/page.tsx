@@ -65,6 +65,46 @@ async function fetchSitemaps(url: string, visited = new Set<string>()): Promise<
   }
 }
 
+async function findSitemaps(baseUrl: string): Promise<string[]> {
+  // Ensure baseUrl has protocol
+  if (!/^https?:\/\//.test(baseUrl)) baseUrl = "https://" + baseUrl.replace(/^\/+/, "");
+  baseUrl = baseUrl.replace(/\/+$/, "");
+
+  // 1. Try robots.txt
+  try {
+    const robotsUrl = baseUrl + "/robots.txt";
+    const res = await fetch("/api/sitemap?url=" + encodeURIComponent(robotsUrl));
+    if (res.ok) {
+      const text = await res.text();
+      const matches = text.match(/^Sitemap:\s*(.+)$/gim);
+      if (matches) {
+        return matches.map(line => line.replace(/^Sitemap:\s*/i, "").trim());
+      }
+    }
+  } catch {}
+
+  // 2. Try common locations
+  const candidates = [
+    "/sitemap.xml",
+    "/sitemap_index.xml",
+    "/sitemap1.xml",
+    "/sitemap/sitemap.xml"
+  ];
+  for (const path of candidates) {
+    try {
+      const url = baseUrl + path;
+      const res = await fetch("/api/sitemap?url=" + encodeURIComponent(url));
+      if (res.ok) {
+        const xml = await res.text();
+        if (xml.includes("<urlset") || xml.includes("<sitemapindex")) {
+          return [url];
+        }
+      }
+    } catch {}
+  }
+  return [];
+}
+
 function toCsv(urls: string[]): string {
   return ["URL", ...urls].join("\n");
 }
@@ -85,13 +125,14 @@ export default function Home() {
     setUrls([]);
     setPage(1); // Reset to first page on new search
     setLoading(true);
-    let sitemapUrl = input.trim();
-    if (!/^https?:\/\//.test(sitemapUrl)) sitemapUrl = "https://" + sitemapUrl;
-    if (!/\.xml($|\?)/.test(sitemapUrl)) {
-      sitemapUrl = sitemapUrl.replace(/\/$/, "") + "/sitemap.xml";
-    }
     try {
-      const found = await fetchSitemaps(sitemapUrl);
+      const sitemapUrls = await findSitemaps(input.trim());
+      if (sitemapUrls.length === 0) {
+        setError("No sitemap found for this website.");
+        setLoading(false);
+        return;
+      }
+      const found = (await Promise.all(sitemapUrls.map((url) => fetchSitemaps(url)))).flat();
       setUrls(found);
       if (found.length === 0) setError("No URLs found or invalid sitemap.");
     } catch {
